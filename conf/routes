@@ -1,0 +1,55 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                         							controllers.Application.index()
+
+POST 	/login												controllers.UserAccountController.checkLogin()
+
+POST 	/register											controllers.UserAccountController.register()
+
+POST	/user/:userId/addshippAddr							controllers.UserAccountController.addShippingAddress(userId: Integer)
+POST	/user/:userId/addCreditCard  						controllers.UserAccountController.addCreditCard(userId: Integer)
+#View, delete and modify user accounts
+GET		/user/:userId										controllers.UserAccountController.getUserAccountInfo(userId: Integer)
+PUT		/user/:userId										controllers.UserAccountController.updateUserAccount(userId: Integer)
+#for admin
+DELETE  /user/:userId										controllers.UserAccountController.deleteUserAccount(userId: Integer)
+
+
+GET     /categories/All										controllers.CategoryController.mainCategories()
+GET		/categories/:parentCat/:childCat					controllers.CategoryController.categories(parentCat: String,childCat: String)
+
+GET		/search/:searchString								controllers.SearchController.getSearchResults(searchString: String)
+
+GET		/images/:imageName									controllers.ImageController.getImage(imageName: String)
+GET		/images/scaled/:imageName							controllers.ImageController.getScaledImage(imageName: String)
+POST    /images         									controllers.ImageController.uploadImage()
+
+GET 	/cart/:userId										controllers.CartController.getCartItems(userId: Integer)
+POST	/cart/:userId/:productId							controllers.CartController.addItemToCart(userId: Integer, productId: Integer)
+DELETE  /cart/:userId/:productId							controllers.CartController.removeItemFromCart(userId: Integer, productId: Integer)
+
+GET     /productInfo/:productId 							controllers.ProductController.getProductInfo(productId: Integer)
+#Sellings include bidding items
+GET		/sellings/:userId									controllers.ProductController.getAllSellingProducts(userId: Integer)
+POST	/sellings/:userId									controllers.ProductController.sellAProduct(userId: Integer)
+PUT		/sellings/:userId/:productId						controllers.ProductController.updateASellingProduct(userId: Integer, productId: Integer)
+DELETE  /sellings/:userId/:productId						controllers.ProductController.quitFromSelling(userId: Integer, productId: Integer)
+
+#GET		/orders/:orderId									controllers.Application.getOrderInfo(OrderId: String)
+
+GET		/buynow/:productId									controllers.ProductController.buyNow(productId: Integer)
+
+POST 	/placeBid											controllers.BidController.placeBid()
+
+GET		/mybiddings/:userId									controllers.BidController.getMyBiddings(userId: Integer)
+
+GET		/myhistory/:userId									controllers.Application.getUserActivityHistory(userId: Integer)						
+
+
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file             	   						controllers.Assets.at(path="/public", file)
