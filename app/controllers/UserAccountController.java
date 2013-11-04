@@ -17,62 +17,62 @@ import testmodels.Test;
 public class UserAccountController extends Controller {
 
 
-	public static Result addCreditCard(int userId){
-		JsonNode json = request().body().asJson();
-		if(json == null) {
-			return badRequest("Expecting Json data");//400
-		} 
-		else {
-			if(userId != 0){
-				return notFound("User not found");//404
-			}
-			else{
-				JsonNode billJson = json.get("billing_address");
-				String country = billJson.get("country").getTextValue();
-				String contact_name = billJson.get("contact_name").getTextValue();
-				String street = billJson.get("street").getTextValue();
-				String city = billJson.get("city").getTextValue();
-				String state = billJson.get("state").getTextValue();
-				String zip_code = billJson.get("zip_code").getTextValue();
-				String telephone = billJson.get("telephone").getTextValue();
-				Address billing_address = new Address(-1,country, contact_name, street, city, state, zip_code, telephone);
-				
-				String number = json.get("number").getTextValue();
-				String holders_name = json.get("holders_name").getTextValue();
-				String exp_date = json.get("exp_date").getTextValue();
-				CreditCard newCreditCard = new CreditCard(number, holders_name, exp_date, billing_address);
-				
-				Logger.info("Card:" + number+holders_name+exp_date+"Bill:" + country + contact_name+ street+city+state+zip_code+ telephone);
-				return ok("Credit Card has been added successfully");//200 
-			}
-		}
-
-	}
-	public static Result addShippingAddress(int userId){
-		JsonNode json = request().body().asJson();
-		if(json == null) {
-			return badRequest("Expecting Json data");//400
-		} 
-		else {
-			if(userId != 0){
-				return notFound("User not found");//404
-			}
-			else{
-				String country = json.get("country").getTextValue();
-				String contact_name = json.get("contact_name").getTextValue();
-				String street = json.get("street").getTextValue();
-				String city = json.get("city").getTextValue();
-				String state = json.get("state").getTextValue();
-				String zip_code = json.get("zip_code").getTextValue();
-				String telephone = json.get("telephone").getTextValue();
-				Address newAddress = new Address(-1,country, contact_name, street, city, state, zip_code, telephone);
-				
-				Logger.info(country + contact_name+ street+city+state+zip_code+ telephone);
-				return ok("Shipping Address has been added successfully");//200 
-			}
-		}
-
-	}
+//	public static Result addCreditCard(int userId){
+//		JsonNode json = request().body().asJson();
+//		if(json == null) {
+//			return badRequest("Expecting Json data");//400
+//		} 
+//		else {
+//			if(userId != 0){
+//				return notFound("User not found");//404
+//			}
+//			else{
+//				JsonNode billJson = json.get("billing_address");
+//				String country = billJson.get("country").getTextValue();
+//				String contact_name = billJson.get("contact_name").getTextValue();
+//				String street = billJson.get("street").getTextValue();
+//				String city = billJson.get("city").getTextValue();
+//				String state = billJson.get("state").getTextValue();
+//				String zip_code = billJson.get("zip_code").getTextValue();
+//				String telephone = billJson.get("telephone").getTextValue();
+//				Address billing_address = new Address(-1,country, contact_name, street, city, state, zip_code, telephone);
+//				
+//				String number = json.get("number").getTextValue();
+//				String holders_name = json.get("holders_name").getTextValue();
+//				String exp_date = json.get("exp_date").getTextValue();
+//				CreditCard newCreditCard = new CreditCard(number, holders_name, exp_date, billing_address);
+//				
+//				Logger.info("Card:" + number+holders_name+exp_date+"Bill:" + country + contact_name+ street+city+state+zip_code+ telephone);
+//				return ok("Credit Card has been added successfully");//200 
+//			}
+//		}
+//
+//	}
+//	public static Result addShippingAddress(int userId){
+//		JsonNode json = request().body().asJson();
+//		if(json == null) {
+//			return badRequest("Expecting Json data");//400
+//		} 
+//		else {
+//			if(userId != 0){
+//				return notFound("User not found");//404
+//			}
+//			else{
+//				String country = json.get("country").getTextValue();
+//				String contact_name = json.get("contact_name").getTextValue();
+//				String street = json.get("street").getTextValue();
+//				String city = json.get("city").getTextValue();
+//				String state = json.get("state").getTextValue();
+//				String zip_code = json.get("zip_code").getTextValue();
+//				String telephone = json.get("telephone").getTextValue();
+//				Address newAddress = new Address(-1,country, contact_name, street, city, state, zip_code, telephone);
+//				
+//				Logger.info(country + contact_name+ street+city+state+zip_code+ telephone);
+//				return ok("Shipping Address has been added successfully");//200 
+//			}
+//		}
+//
+//	}
 	public static Result checkLogin(){
 		JsonNode json = request().body().asJson();
 		if(json == null) {
@@ -156,7 +156,12 @@ public class UserAccountController extends Controller {
 			return notFound("User not found");//404
 		}
 		else{
-
+			
+			
+			
+			
+			
+			Logger.info(json.toString());
 			return ok("User account has been updated");//200
 		}
 	}

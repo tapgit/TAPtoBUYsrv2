@@ -9,8 +9,6 @@ POST 	/login												controllers.UserAccountController.checkLogin()
 
 POST 	/register											controllers.UserAccountController.register()
 
-POST	/user/:userId/addshippAddr							controllers.UserAccountController.addShippingAddress(userId: Integer)
-POST	/user/:userId/addCreditCard  						controllers.UserAccountController.addCreditCard(userId: Integer)
 #View, delete and modify user accounts
 GET		/user/:userId										controllers.UserAccountController.getUserAccountInfo(userId: Integer)
 PUT		/user/:userId										controllers.UserAccountController.updateUserAccount(userId: Integer)
@@ -36,7 +34,7 @@ GET     /productInfo/:productId 							controllers.ProductController.getProductI
 GET		/sellings/:userId									controllers.ProductController.getAllSellingProducts(userId: Integer)
 POST	/sellings/:userId									controllers.ProductController.sellAProduct(userId: Integer)
 PUT		/sellings/:userId/:productId						controllers.ProductController.updateASellingProduct(userId: Integer, productId: Integer)
-DELETE  /sellings/:userId/:productId						controllers.ProductController.quitFromSelling(userId: Integer, productId: Integer)
+DELETE  /sellings/:userId/:productId 						controllers.ProductController.quitFromSelling(userId: Integer, productId: Integer)
 
 #GET		/orders/:orderId									controllers.Application.getOrderInfo(OrderId: String)
 

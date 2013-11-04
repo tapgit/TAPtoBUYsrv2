@@ -15,6 +15,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
+import play.Logger;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -153,7 +154,8 @@ public class ProductController extends Controller {
 
 		}
 	}
-	public static Result quitFromSelling(int userId, int productId){
+	public static Result quitFromSelling(int userId, int productId){ //Includes items for sale and items in auctions
+		Logger.info("user ID = " + userId + " product Id to remove = " + productId);
 		if(userId != 0){
 			return notFound("No cart found related to that user id");//404
 		}
@@ -162,7 +164,6 @@ public class ProductController extends Controller {
 		}
 		else{
 			//Quit from sale
-
 			return noContent();//204 (product removed from sale successfully)
 		}
 	}
