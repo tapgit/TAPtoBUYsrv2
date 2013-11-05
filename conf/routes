@@ -15,6 +15,7 @@ PUT		/user/:userId										controllers.UserAccountController.updateUserAccount(
 #for admin
 DELETE  /user/:userId										controllers.UserAccountController.deleteUserAccount(userId: Integer)
 
+GET		 /testdb		controllers.Application.testdb()
 
 GET     /categories/All										controllers.CategoryController.mainCategories()
 GET		/categories/:parentCat/:childCat					controllers.CategoryController.categories(parentCat: String,childCat: String)
@@ -46,7 +47,7 @@ GET		/mybiddings/:userId									controllers.BidController.getMyBiddings(userId:
 
 GET		/myhistory/:userId									controllers.Application.getUserActivityHistory(userId: Integer)						
 
-
+GET		/bidlist/:productId									controllers.BidController.getBidList(productId: Integer)
 
 
 # Map static resources from the /public folder to the /assets URL path
