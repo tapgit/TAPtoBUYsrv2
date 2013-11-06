@@ -106,6 +106,13 @@ public class Test {
 		return result;
 	}
 	
+//	public static ArrayList<Product> getBuyNowItemList(){
+//		ArrayList<Product> items = getProductList();
+//		ArrayList<Product> buyNowItems = new ArrayList<Product>();
+//		buyNowItems.add(items.get(0));
+//		buyNowItems.add(items.get(3));
+//		return buyNowItems;
+//	}
 
 	
 }

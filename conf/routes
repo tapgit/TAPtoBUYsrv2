@@ -17,8 +17,7 @@ DELETE  /user/:userId										controllers.UserAccountController.deleteUserAccou
 
 GET		 /testdb		controllers.Application.testdb()
 
-GET     /categories/All										controllers.CategoryController.mainCategories()
-GET		/categories/:parentCat/:childCat					controllers.CategoryController.categories(parentCat: String,childCat: String)
+GET		/subcategoriesof/:parentCatId						controllers.CategoryController.getSubcategories(parentCatId: Integer)
 
 GET		/search/:searchString								controllers.SearchController.getSearchResults(searchString: String)
 
@@ -39,7 +38,10 @@ DELETE  /sellings/:userId/:productId 						controllers.ProductController.quitFro
 
 #GET		/orders/:orderId									controllers.Application.getOrderInfo(OrderId: String)
 
-GET		/buynow/:productId									controllers.ProductController.buyNow(productId: Integer)
+#GET		/buynow/:productId									controllers.ProductController.buyNow(productId: Integer)
+
+POST	/placeorder/:userId									controllers.ProductController.placeOrder(userId: Integer)
+POST	/buynow/:userId										controllers.ProductController.buyNow(userId: Integer)
 
 POST 	/placeBid											controllers.BidController.placeBid()
 

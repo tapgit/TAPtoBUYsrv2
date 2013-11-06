@@ -1,6 +1,7 @@
 package controllers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import models.Address;
 import models.Bid;
@@ -11,18 +12,25 @@ import models.ProductForSale;
 import models.ProductForSaleInfo;
 import models.User;
 
+import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+
+
 
 import play.Logger;
+
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import testmodels.Test;
 
 public class ProductController extends Controller {
-	
+
 	public static Result getProductInfo(int productId){
 		ArrayList<Product> productInfos = Test.getProductInfoList();
 		int target = -1;
@@ -47,9 +55,9 @@ public class ProductController extends Controller {
 			return ok(itemInfoJson);//200
 		}
 	}
-	
+
 	////Selling products
-	
+
 	public static Result getAllSellingProducts(int userId){
 		if(userId != 0){
 			return notFound("User not found");//404
@@ -167,26 +175,78 @@ public class ProductController extends Controller {
 			return noContent();//204 (product removed from sale successfully)
 		}
 	}
-	
 
-	public static Result buyNow(int productId){
-		if(!(productId >=0 && productId < 6)){
-			return notFound("Product not found");//404
-		}
-		else{
-			Product buyNowProduct = Test.getProductList().get(productId);
-			if(buyNowProduct instanceof ProductForSale){
-				User theUser = Test.getUser();
-				Address defualtShippingAddress = theUser.getShipping_addresses()[0];
-				ObjectNode json =  Json.newObject();
-				json.putPOJO("shipping_address", Json.toJson(defualtShippingAddress));
-				json.putPOJO("buyNowProduct", Json.toJson(buyNowProduct));
-				return ok(json);//200
-			}
-			else{
-				return badRequest("Cannot buy instantly items in auction");//400
+
+	//	public static Result buyNow(int productId){
+	//		if(!(productId >=0 && productId < 6)){
+	//			return notFound("Product not found");//404
+	//		}
+	//		else{
+	//			Product buyNowProduct = Test.getProductList().get(productId);
+	//			if(buyNowProduct instanceof ProductForSale){
+	//				User theUser = Test.getUser();
+	//				Address defualtShippingAddress = theUser.getShipping_addresses()[0];
+	//				ObjectNode json =  Json.newObject();
+	//				json.putPOJO("shipping_address", Json.toJson(defualtShippingAddress));
+	//				json.putPOJO("buyNowProduct", Json.toJson(buyNowProduct));
+	//				return ok(json);//200
+	//			}
+	//			else{
+	//				return badRequest("Cannot buy instantly items in auction");//400
+	//			}
+	//		}
+	//	}
+	public static Result buyNow(int userId){
+		JsonNode json = request().body().asJson();
+		if(json == null) {
+			return badRequest("Expecting Json data");//400
+		} 
+		else {
+			try {
+				Logger.info(json.toString());
+				JSONArray array = (new JSONObject(json.toString())).getJSONArray("productIdsToBuy");
+				ArrayList<Integer> productsIdsTobuy  = new ArrayList<Integer>();
+				for(int i=0;i<array.length();i++){
+					productsIdsTobuy.add(array.getInt(i));
+				}
+				//buscar los productos para cada productId en el array y devolverlo junto con el shippingaddrs y creditcards del user
+
+				ArrayList<Product> items = Test.getProductList();
+				ObjectNode respJson = Json.newObject();
+				ArrayNode respArray = respJson.arrayNode();
+
+				ObjectNode itemJson = null;
+				double pricesTotal = 0;
+				double shippingsTotal = 0;
+				for(Product p: items){
+					if(productsIdsTobuy.contains(p.getId())){
+						itemJson = Json.newObject();
+						if(p instanceof ProductForSale){ //for sale
+							itemJson.put("forBid", false);
+							pricesTotal+=((ProductForSale) p).getInstantPrice();
+						}
+						else{ //for auction
+							itemJson.put("forBid", true);
+							pricesTotal+=((ProductForAuction)p).getCurrentBidPrice();
+						}
+						itemJson.putPOJO("item", Json.toJson(p));
+						respArray.add(itemJson);
+						shippingsTotal+=p.getShippingPrice();
+					}
+				}
+				respJson.put("productsToBuy", respArray);
+				
+				respJson.put("total", "$"+pricesTotal+ " (Shipping: $" + shippingsTotal +")");
+				return ok(respJson);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				return notFound();
 			}
 		}
 	}
-	
+	public static Result placeOrder(int userId){
+		return TODO;
+	}
+
 }

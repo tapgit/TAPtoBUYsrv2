@@ -9,10 +9,10 @@ import java.sql.Statement;
 import play.Logger;
 
 public class DBManager {
-	private static String driver = "org.postgresql.Driver";
-	private static String db = "jdbc:postgresql://localhost:5432/TAPtoBUYDB";
-	private static String user = "postgres";
-	private static String pass = "postgres";
+	public static String driver = "org.postgresql.Driver";
+	public static String db = "jdbc:postgresql://localhost:5432/TAPtoBUYDB";
+	public static String user = "postgres";
+	public static String pass = "postgres";
 
 	
 	
