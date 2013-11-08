@@ -9,8 +9,8 @@ object ApplicationBuild extends Build {
 
   val appDependencies = Seq(
     // Add your project dependencies here,
-    "postgresql" % "postgresql" % "9.1-901.jdbc4",
-    "org.json"%"org.json"%"chargebee-1.0",
+    //"postgresql" % "postgresql" % "9.1-901.jdbc4",
+    //"org.json"%"org.json"%"chargebee-1.0",
     javaCore,
     javaJdbc,
     javaEbean
