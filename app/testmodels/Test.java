@@ -90,7 +90,7 @@ public class Test {
 		Address creditCard1BillingAddress = shippingAddresses[1];
 		creditCards[0] = new CreditCard("1234567890129090", "Lolo Lopez", "09/09/14",creditCard0BillingAddress);
 		creditCards[1] = new CreditCard("7772372431431234", "Medalla Rodriguez", "06/07/16",creditCard1BillingAddress);
-		User user = new User(0,"Kevin", "Castillo", "kebinbin", "1234", "kebinbin@hotmail.com", shippingAddresses, creditCards);
+		User user = new User(16,"Kevin", "Castillo", "kebinbin", "1234", "kebinbin@hotmail.com", shippingAddresses, creditCards);
 		return user;
 	}
 	

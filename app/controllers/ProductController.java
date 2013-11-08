@@ -59,7 +59,7 @@ public class ProductController extends Controller {
 	////Selling products
 
 	public static Result getAllSellingProducts(int userId){
-		if(userId != 0){
+		if(userId != 16){
 			return notFound("User not found");//404
 		}
 		else{
@@ -89,7 +89,7 @@ public class ProductController extends Controller {
 			return badRequest("Expecting Json data");//400
 		} 
 		else {
-			if(userId != 0){
+			if(userId !=16){
 				return notFound("User not found");//404
 			}
 			else{
@@ -128,7 +128,7 @@ public class ProductController extends Controller {
 			return badRequest("Expecting Json data");//400
 		} 
 		else {
-			if(userId != 0){
+			if(userId != 16){
 				return notFound("User not found");//404
 			}
 			else if(!(productId >=0 && productId < 6)){
@@ -164,7 +164,7 @@ public class ProductController extends Controller {
 	}
 	public static Result quitFromSelling(int userId, int productId){ //Includes items for sale and items in auctions
 		Logger.info("user ID = " + userId + " product Id to remove = " + productId);
-		if(userId != 0){
+		if(userId != 16){
 			return notFound("No cart found related to that user id");//404
 		}
 		else if(!(productId >=0 && productId < 6)){

@@ -15,7 +15,6 @@ PUT		/user/:userId										controllers.UserAccountController.updateUserAccount(
 #for admin
 DELETE  /user/:userId										controllers.UserAccountController.deleteUserAccount(userId: Integer)
 
-GET		 /testdb		controllers.Application.testdb()
 
 GET		/subcategoriesof/:parentCatId						controllers.CategoryController.getSubcategories(parentCatId: Integer)
 

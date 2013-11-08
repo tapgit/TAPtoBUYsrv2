@@ -24,26 +24,20 @@ public class CategoryController extends Controller {
 			Class.forName(DBManager.driver);
 			Connection connection = DriverManager.getConnection(DBManager.db,DBManager.user,DBManager.pass);
 			Statement statement = connection.createStatement();
-			Statement statement2 = connection.createStatement();
 			ObjectNode respJson = Json.newObject();
 			ArrayNode array = respJson.arrayNode();
 			ObjectNode catJson = null;
 			
-			ResultSet rset = statement.executeQuery("select *" +
-					                                "from category natural join has_subcat as subcat(cat_id,parent_id)"+ 
-													"where parent_id = " + parentCatId + ";");
-			
-			
-			ResultSet rset2 = null;
+			ResultSet rset = statement.executeQuery("select cat_id, catname, count(CB.childcat_id) " + 
+													"from category, has_subcat as CA natural left outer join has_subcat as CB(cid,childcat_id) " +
+													"where cat_id = CA.childcat_id and CA.parentcat_id = " + parentCatId +
+													"group by cat_id, catname " +
+													"order by catname;");
 			while(rset.next()){
 				catJson = Json.newObject();
 				catJson.put("catId", rset.getString(1));
 				catJson.put("name", rset.getString(2));
-				rset2 = statement2.executeQuery("select count(*)" +
-											   "from category natural join has_subcat as subcat(cat_id,parent_id)"+ 
-											   "where parent_id = " + rset.getString(1) + ";");
-				rset2.next();
-				if(rset2.getInt(1)==0){
+				if(rset.getInt(3)==0){
 					catJson.put("hasSubCategories", false );
 				}
 				else{

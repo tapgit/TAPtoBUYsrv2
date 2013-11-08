@@ -20,7 +20,7 @@ public class CartController extends Controller {
 	public static Result getCartItems(int userId){	
 		ArrayList<ProductForSale> itemsInCart = Test.getCartItemsList();
 		
-		if(userId==0){
+		if(userId==16){
 			ObjectNode respJson = Json.newObject();
 			ArrayNode array = respJson.arrayNode();
 			ObjectNode itemJson = null;
@@ -43,7 +43,7 @@ public class CartController extends Controller {
 			return badRequest("Expecting Json data");//400
 		} 
 		else {
-			if(userId != 0){
+			if(userId != 16){
 				return notFound("No cart found related to that user id");//404
 			}
 			else if(!(productId >=0 && productId < 6)){
@@ -57,7 +57,7 @@ public class CartController extends Controller {
 		}
 	}
 	public static Result removeItemFromCart(int userId, int productId){
-			if(userId != 0){
+			if(userId != 16){
 				return notFound("No cart found related to that user id");//404
 			}
 			else if(!(productId >=0 && productId < 6)){
