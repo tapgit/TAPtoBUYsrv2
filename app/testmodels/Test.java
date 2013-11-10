@@ -16,8 +16,8 @@ import models.User;
 
 public class Test {
 
-	public static String imagesDir = "/home/cok0/git/TAPtoBUYsrv/images/";
-	//public static String imagesDir = "C:\\Users\\Kidany\\Documents\\GitHub\\git\\TAPtoBUYsrv\\images\\";
+	public static String imagesDir = "/home/cok0/git/TAPtoBUYsrv2/images/";
+	//public static String imagesDir = "C:\\Users\\Kidany\\Documents\\GitHub\\git\\TAPtoBUYsrv2\\images\\";
 	public static ArrayList<Product> getProductList(){
 		String scaledImgDir = "http://10.0.2.2:9000/images/scaled/";
 

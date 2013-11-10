@@ -36,7 +36,7 @@ public class Application extends Controller {
 	}
 	
 	public static Result getUserActivityHistory(int userId){////////Busca dentro de las ordenes donde este userId es seller y donde es buyer
-		if(userId!=0){
+		if(userId!=16){
 			return notFound("User not found");//404
 		}
 		else{

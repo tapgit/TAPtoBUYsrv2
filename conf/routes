@@ -9,6 +9,8 @@ POST 	/login												controllers.UserAccountController.checkLogin()
 
 POST 	/register											controllers.UserAccountController.register()
 
+GET /db controllers.Application.testdb()
+
 #View, delete and modify user accounts
 GET		/user/:userId										controllers.UserAccountController.getUserAccountInfo(userId: Integer)
 PUT		/user/:userId										controllers.UserAccountController.updateUserAccount(userId: Integer)
@@ -18,7 +20,9 @@ DELETE  /user/:userId										controllers.UserAccountController.deleteUserAccou
 
 GET		/subcategoriesof/:parentCatId						controllers.CategoryController.getSubcategories(parentCatId: Integer)
 
-GET		/search/:searchString								controllers.SearchController.getSearchResults(searchString: String)
+GET		/search/:catId/:orderById				 			controllers.SearchController.getSearchResultsAll(catId: Integer, orderById: Integer)
+GET		/search/:catId/:orderById/:searchString  			controllers.SearchController.getSearchResults(catId: Integer, orderById: Integer, searchString: String)
+
 
 GET		/images/:imageName									controllers.ImageController.getImage(imageName: String)
 GET		/images/scaled/:imageName							controllers.ImageController.getScaledImage(imageName: String)

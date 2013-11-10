@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.Calendar;
 
 import play.Logger;
 
@@ -22,10 +24,13 @@ public class DBManager {
 			Connection connection = DriverManager.getConnection(db,user,pass);
 			Statement statement = connection.createStatement();
 			
-			ResultSet rset = statement.executeQuery("select * from admins");
-			if(!rset.next()){Logger.info("NO hay na");}
+			ResultSet rset = statement.executeQuery("select istart_sale_date from item");
+			Timestamp a = null;
+			Calendar b = null;
+
+			//if(!rset.next()){Logger.info("NO hay na");} 2013-11-08
 			while(rset.next()){
-				Logger.info("Username: " + rset.getString(2) + " Password: " + rset.getString("pass") + "\n");
+				//Logger.info("date: " + a.get+ "\n");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
