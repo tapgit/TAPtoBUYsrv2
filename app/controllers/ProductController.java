@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,9 +38,10 @@ import testmodels.Test;
 
 public class ProductController extends Controller {
 	public static String andrImgDir = "http://10.0.2.2:9000/images/";
+	public static String andrScaledImgDir = "http://10.0.2.2:9000/images/scaled/";
 	
+	//DONE
 	public static Result getProductInfo(int productId){
-		
 		try{
 			Class.forName(DBManager.driver);
 			Connection connection = DriverManager.getConnection(DBManager.db,DBManager.user,DBManager.pass);
@@ -105,31 +107,61 @@ public class ProductController extends Controller {
 		}
 	}
 
-	////Selling products
-
+	//DONE
 	public static Result getAllSellingProducts(int userId){
-		if(userId != 16){
-			return notFound("User not found");//404
-		}
-		else{
-			ArrayList<Product> sellingItems = Test.getSellingItemsList();
+		try{
+			Class.forName(DBManager.driver);
+			Connection connection = DriverManager.getConnection(DBManager.db,DBManager.user,DBManager.pass);
+			Statement statement = connection.createStatement();
+			ResultSet rset = statement.executeQuery("select * " +
+													"from (select iid,ititle,ishipping_price,remaining_quantity as num1,instant_price as price,uid,false as forBid,to_char(istart_sale_date + itime_duration - current_timestamp,'DD') as days,to_char(istart_sale_date + itime_duration - current_timestamp,'HH24') as hours, " +
+													"to_char(istart_sale_date + itime_duration - current_timestamp,'MI') as minutes, to_char(istart_sale_date + itime_duration - current_timestamp,'SS') as seconds " +
+													"from item natural join item_for_sale " + 
+													"group by iid,ititle,ishipping_price,remaining_quantity,instant_price,uid " +
+													"union " + 
+													"select iid,ititle,ishipping_price,total_bids as num1,current_bid_price as price,uid,true as forBid,to_char(istart_sale_date + itime_duration - current_timestamp,'DD') as days,to_char(istart_sale_date + itime_duration - current_timestamp,'HH24') as hours, " +
+													"to_char(istart_sale_date + itime_duration - current_timestamp,'MI') as minutes, to_char(istart_sale_date + itime_duration - current_timestamp,'SS') as seconds " +
+													"from item natural join item_for_auction " +
+													"group by iid,ititle,ishipping_price,total_bids,current_bid_price,uid) as results " +
+													"where results.uid = " + userId + ";");
+			
 			ObjectNode respJson = Json.newObject();
 			ArrayNode array = respJson.arrayNode();
 			ObjectNode itemJson = null;
-
-			for(Product p: sellingItems){
+			Product item = null;
+			
+			String findDate[] = {"days","hours","minutes","seconds"};
+			
+			while(rset.next()){
 				itemJson = Json.newObject();
-				if(p instanceof ProductForAuction){
-					itemJson.put("forBid", true);
+				int tCount = 0;
+				String timeRemaining = "";
+				for(int i=0;i<4;i++){
+					if(!rset.getString(findDate[i]).equals("00") && tCount < 2){
+						timeRemaining+=rset.getString(findDate[i]) + findDate[i].charAt(0) + " ";
+						tCount++;
+					}
 				}
-				else{
+				if(!rset.getBoolean("forBid")){//for sale
+					item = new ProductForSale(rset.getInt("iid"), rset.getString("ititle"), timeRemaining, rset.getDouble("ishipping_price"), 
+							andrScaledImgDir + "img" + rset.getInt("iid") +".jpg", "", -1, rset.getInt("num1"), rset.getDouble("price"));
 					itemJson.put("forBid", false);
 				}
-				itemJson.putPOJO("item", Json.toJson(p));
+				else{//for auction
+					item = new ProductForAuction(rset.getInt("iid"), rset.getString("ititle"), timeRemaining, rset.getDouble("ishipping_price"), 
+							andrScaledImgDir + "img" + rset.getInt("iid") +".jpg", "", -1, -1, rset.getDouble("price"), rset.getInt("num1"));
+					itemJson.put("forBid", true);
+				}
+				itemJson.putPOJO("item", Json.toJson(item));
 				array.add(itemJson);
 			}
-			respJson.put("mySellingItems", array);
-			return ok(respJson);//200
+		respJson.put("mySellingItems", array);
+		return ok(respJson);//200
+		}
+		catch (Exception e) {
+			Logger.info("EXCEPTION ON MY SELLING PRODUCTS");
+			e.printStackTrace();
+			return notFound();
 		}
 	}
 	public static Result sellAProduct(int userId){
@@ -138,10 +170,10 @@ public class ProductController extends Controller {
 			return badRequest("Expecting Json data");//400
 		} 
 		else {
-			if(userId !=16){
-				return notFound("User not found");//404
-			}
-			else{
+//			if(userId !=16){
+//				return notFound("User not found");//404
+//			}
+//			else{
 				Product theItem = null;
 				JsonNode productInfoJson = json.get("productInfo");
 				if(json.get("forBid").getBooleanValue()){
@@ -169,7 +201,7 @@ public class ProductController extends Controller {
 				return ok();//200 (product is now on sale)
 			}
 
-		}
+//		}
 	}
 	public static Result updateASellingProduct(int userId, int productId){
 		JsonNode json = request().body().asJson();
@@ -177,13 +209,13 @@ public class ProductController extends Controller {
 			return badRequest("Expecting Json data");//400
 		} 
 		else {
-			if(userId != 16){
-				return notFound("User not found");//404
-			}
-			else if(!(productId >=0 && productId < 6)){
-				return notFound("Product not found");//404
-			}
-			else{
+//			if(userId != 16){
+//				return notFound("User not found");//404
+//			}
+//			else if(!(productId >=0 && productId < 6)){
+//				return notFound("Product not found");//404
+//			}
+//			else{
 				Product theItem = null;
 				JsonNode productInfoJson = json.get("productInfo");
 				if(json.get("forBid").getBooleanValue()){
@@ -209,20 +241,20 @@ public class ProductController extends Controller {
 				return ok();//200 (product is now on sale)
 			}
 
-		}
+		//}
 	}
 	public static Result quitFromSelling(int userId, int productId){ //Includes items for sale and items in auctions
 		Logger.info("user ID = " + userId + " product Id to remove = " + productId);
-		if(userId != 16){
-			return notFound("No cart found related to that user id");//404
-		}
-		else if(!(productId >=0 && productId < 6)){
-			return notFound("Product not found");//404
-		}
-		else{
+//		if(userId != 16){
+//			return notFound("No cart found related to that user id");//404
+//		}
+//		else if(!(productId >=0 && productId < 6)){
+//			return notFound("Product not found");//404
+//		}
+//		else{
 			//Quit from sale
 			return noContent();//204 (product removed from sale successfully)
-		}
+		//}
 	}
 
 
@@ -251,47 +283,85 @@ public class ProductController extends Controller {
 			return badRequest("Expecting Json data");//400
 		} 
 		else {
-			try {
-				Logger.info(json.toString());
-				JSONArray array = (new JSONObject(json.toString())).getJSONArray("productIdsToBuy");
-				ArrayList<Integer> productsIdsTobuy  = new ArrayList<Integer>();
-				for(int i=0;i<array.length();i++){
-					productsIdsTobuy.add(array.getInt(i));
-				}
-				//buscar los productos para cada productId en el array y devolverlo junto con el shippingaddrs y creditcards del user
-
-				ArrayList<Product> items = Test.getProductList();
-				ObjectNode respJson = Json.newObject();
-				ArrayNode respArray = respJson.arrayNode();
-
-				ObjectNode itemJson = null;
-				double pricesTotal = 0;
-				double shippingsTotal = 0;
-				for(Product p: items){
-					if(productsIdsTobuy.contains(p.getId())){
-						itemJson = Json.newObject();
-						if(p instanceof ProductForSale){ //for sale
-							itemJson.put("forBid", false);
-							pricesTotal+=((ProductForSale) p).getInstantPrice();
-						}
-						else{ //for auction
-							itemJson.put("forBid", true);
-							pricesTotal+=((ProductForAuction)p).getCurrentBidPrice();
-						}
-						itemJson.putPOJO("item", Json.toJson(p));
-						respArray.add(itemJson);
-						shippingsTotal+=p.getShippingPrice();
+				try{
+					Logger.info(json.toString());
+					JSONArray array = (new JSONObject(json.toString())).getJSONArray("productIdsToBuy");
+					String buyNowIdsList = null;
+					if(array.length()==0){
+						return badRequest("Expecting productlist");
 					}
+					else{
+						buyNowIdsList = "("+ array.getInt(0);
+						for(int i=1;i<array.length();i++){
+							buyNowIdsList += "," + array.getInt(i);
+						}
+						buyNowIdsList += ")";
+					}
+					Logger.info("Received buynow ids list: " + buyNowIdsList);
+					Class.forName(DBManager.driver);
+					Connection connection = DriverManager.getConnection(DBManager.db,DBManager.user,DBManager.pass);
+					Statement statement = connection.createStatement();
+					ResultSet rset = statement.executeQuery("select * " + 
+															"from (select iid,ititle,ishipping_price,remaining_quantity as num1,instant_price as price,false as forBid, " +
+															"to_char(istart_sale_date + itime_duration - current_timestamp,'DD') as days,to_char(istart_sale_date + itime_duration - current_timestamp,'HH24') as hours, " +
+															"to_char(istart_sale_date + itime_duration - current_timestamp,'MI') as minutes, to_char(istart_sale_date + itime_duration - current_timestamp,'SS') as seconds, " +
+															"username,avg(stars) " +
+															"from item natural join item_for_sale natural join users natural join ranks as rnk(b_uid,uid,stars) " +
+															"where item_for_sale.iid in " + buyNowIdsList + " " +
+															"group by iid,ititle,ishipping_price,remaining_quantity,instant_price,username " +
+															"union " +
+															"select iid,ititle,ishipping_price,total_bids as num1,current_bid_price as price,true as forBid, " +
+															"to_char(istart_sale_date + itime_duration - current_timestamp,'DD') as days,to_char(istart_sale_date + itime_duration - current_timestamp,'HH24') as hours, " +
+															"to_char(istart_sale_date + itime_duration - current_timestamp,'MI') as minutes, to_char(istart_sale_date + itime_duration - current_timestamp,'SS') as seconds, " +
+															"username,avg(stars) " +
+															"from item natural join item_for_auction natural join users natural join ranks as rnk(b_uid,uid,stars) " +
+															"where item_for_auction.iid in " + buyNowIdsList + " " +
+															"group by iid,ititle,ishipping_price,total_bids,current_bid_price,username) as results;");
+					
+					ObjectNode respJson = Json.newObject();
+					ArrayNode respArray = respJson.arrayNode();
+	
+					ObjectNode itemJson = null;
+					double pricesTotal = 0;
+					double shippingsTotal = 0;
+					Product item = null;
+					
+					String findDate[] = {"days","hours","minutes","seconds"};
+					
+					while(rset.next()){
+						itemJson = Json.newObject();
+						int tCount = 0;
+						String timeRemaining = "";
+						for(int i=0;i<4;i++){
+							if(!rset.getString(findDate[i]).equals("00") && tCount < 2){
+								timeRemaining+=rset.getString(findDate[i]) + findDate[i].charAt(0) + " ";
+								tCount++;
+							}
+						}
+						if(!rset.getBoolean("forBid")){//for sale
+							item = new ProductForSale(rset.getInt("iid"), rset.getString("ititle"), timeRemaining, rset.getDouble("ishipping_price"), 
+									andrScaledImgDir + "img" + rset.getInt("iid") +".jpg",  rset.getString("username"), rset.getDouble("avg"), rset.getInt("num1"), rset.getDouble("price"));
+							itemJson.put("forBid", false);
+						}
+						else{//for auction
+							item = new ProductForAuction(rset.getInt("iid"), rset.getString("ititle"), timeRemaining, rset.getDouble("ishipping_price"), 
+									andrScaledImgDir + "img" + rset.getInt("iid") +".jpg",  rset.getString("username"), rset.getDouble("avg"), -1, rset.getDouble("price"), rset.getInt("num1"));
+							itemJson.put("forBid", true);
+						}
+						pricesTotal+=rset.getDouble("price");
+						shippingsTotal+=rset.getDouble("ishipping_price");
+						itemJson.putPOJO("item", Json.toJson(item));
+						respArray.add(itemJson);
+					}
+					respJson.put("productsToBuy", respArray);
+					respJson.put("total", "$"+ new DecimalFormat("##.##").format(pricesTotal) + " (Shipping: $" + new DecimalFormat("##.##").format(shippingsTotal) +")");
+					return ok(respJson);
 				}
-				respJson.put("productsToBuy", respArray);
-				
-				respJson.put("total", "$"+pricesTotal+ " (Shipping: $" + shippingsTotal +")");
-				return ok(respJson);
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				return notFound();
-			}
+				catch (Exception e) {
+					Logger.info("EXCEPTION ON MY SELLING PRODUCTS");
+					e.printStackTrace();
+					return notFound();
+				}
 		}
 	}
 	public static Result placeOrder(int userId){

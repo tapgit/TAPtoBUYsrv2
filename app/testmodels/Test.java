@@ -18,6 +18,8 @@ public class Test {
 
 	public static String imagesDir = "/home/cok0/git/TAPtoBUYsrv2/images/";
 	//public static String imagesDir = "C:\\Users\\Kidany\\Documents\\GitHub\\git\\TAPtoBUYsrv2\\images\\";
+	
+	//DONE
 	public static ArrayList<Product> getProductList(){
 		String scaledImgDir = "http://10.0.2.2:9000/images/scaled/";
 
@@ -37,6 +39,7 @@ public class Test {
 		items.add(item6);
 		return items;
 	}
+	//DONE
 	public static ArrayList<Product> getProductInfoList(){
 		String imgDir = "http://10.0.2.2:9000/images/";
 		Product productInfo1 = new ProductForSaleInfo(0,"iPhone 5s black new", "12d 5h", 9.99, imgDir+"img1.jpg", "juanitoManito77", 4.5, 10, 599.00, "iPhone", "5s", "Apple", "10x5", "Brand new black iphone 5s");
@@ -54,6 +57,7 @@ public class Test {
 		productInfos.add(productInfo6);
 		return productInfos;
 	}
+	//DONE
 	public static ArrayList<ProductForSale> getCartItemsList(){
 		ArrayList<Product> items = getProductList();
 		ArrayList<ProductForSale> cartItems = new ArrayList<ProductForSale>();
@@ -62,6 +66,7 @@ public class Test {
 		cartItems.add((ProductForSale)items.get(5));
 		return cartItems;
 	}
+	
 	public static ArrayList<Product> getSellingItemsList(){
 		ArrayList<Product> items = getProductList();
 		ArrayList<Product> mySellingItems = new ArrayList<Product>();
@@ -78,7 +83,7 @@ public class Test {
 		myHistoryItems.add(items.get(3));
 		return myHistoryItems;
 	}
-	
+	//DONE
 	public static User getUser(){
 		Address[] shippingAddresses = new Address[2];
 		shippingAddresses[0] = new Address(0,"Puerto Rico", "Kevin Castillo", "Calle Plantio # 48 Urb. Paseos del Prado", "Carolina", "PR", 
