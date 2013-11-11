@@ -90,8 +90,7 @@ public class ProductController extends Controller {
 					Product itemInfo = new ProductForAuctionInfo(rset.getInt("iid"), rset.getString("ititle"), timeRemaining, rset.getDouble("ishipping_price"), 
 							andrImgDir + "img" + rset.getInt("iid") +".jpg", rset.getString("username"), rset.getDouble("avg"), -1, rset.getDouble("current_bid_price"), 
 							rset.getInt("total_bids"), rset.getString("product"), rset.getString("model"), rset.getString("brand"), rset.getString("dimensions"), rset.getString("description"));
-							itemInfoJson.putPOJO("productInfo", Json.toJson(itemInfo));
-					
+							itemInfoJson.putPOJO("productInfo", Json.toJson(itemInfo));		
 					return ok(itemInfoJson);//200 
 				}
 				else{

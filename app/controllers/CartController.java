@@ -1,5 +1,9 @@
 package controllers;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import models.Product;
@@ -9,6 +13,9 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
+import dbman.DBManager;
+
+import play.Logger;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -16,27 +23,41 @@ import testmodels.Test;
 
 public class CartController extends Controller {
 
-
+	public static String andrScaledImgDir = "http://10.0.2.2:9000/images/scaled/";
+	
 	public static Result getCartItems(int userId){	
-		ArrayList<ProductForSale> itemsInCart = Test.getCartItemsList();
 		
-		if(userId==16){
+		try{
+			Class.forName(DBManager.driver);
+			Connection connection = DriverManager.getConnection(DBManager.db,DBManager.user,DBManager.pass);
+			Statement statement = connection.createStatement();
 			ObjectNode respJson = Json.newObject();
 			ArrayNode array = respJson.arrayNode();
 			ObjectNode itemJson = null;
-			
-			for(ProductForSale p: itemsInCart){
+			ProductForSale item = null;
+			ResultSet rset = statement.executeQuery("select iid,ititle,instant_price,ishipping_price,username,avg(stars) " +
+													"from item natural join item_for_sale natural join users natural join ranks as rnk(b_uid,uid,stars) " +
+													"where iid in (select iid from user_cart_item where uid = " + userId + ") " + 
+													"group by iid,ititle,instant_price,ishipping_price,username;"); 
+			while(rset.next()){
 				itemJson = Json.newObject();
-				itemJson.putPOJO("item", Json.toJson(p));
+				item = new ProductForSale(rset.getInt("iid"), rset.getString("ititle"), null, rset.getDouble("ishipping_price"), 
+						andrScaledImgDir + "img" + rset.getInt("iid") +".jpg", rset.getString("username"), rset.getDouble("avg"), -1, rset.getDouble("instant_price"));
+				itemJson.putPOJO("item", Json.toJson(item));
 				array.add(itemJson);
 			}
+			
 			respJson.put("cart", array);
 			return ok(respJson);//200
 		}
-		else{
-			return notFound("No cart found related to that user id");//404
+		catch (Exception e) {
+			Logger.info("EXCEPTION ON CART ITEMS");
+			e.printStackTrace();
+			return notFound();
 		}
 	}
+	
+	
 	public static Result addItemToCart(int userId, int productId){
 		JsonNode json = request().body().asJson();
 		if(json == null) {
