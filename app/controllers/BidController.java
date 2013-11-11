@@ -130,33 +130,35 @@ public class BidController extends Controller {
 //		return ok(respJson);//200
 
 	}
-
+	
+	//DONE
 	public static Result getBidList(int productId){
-		//El productId recibido es de un item for auction que esta relacionado a 0 o mas tuplas de la tabla Bid
-		//Cada una de esas tuplas (filas) son bids que se le han puesto a este item.  Y cada una de ellas esta tambien
-		//relacionada al usuario que puso el bid.  Por lo tanto, de ahi podemos sacar los bidders (de la tabla users) que 
-		//que pusieron bids en este producto.
-
-		//Buscar en la tabla de item_for_auction el item con este productId, sacarle el uId(user id q lo puso en subasta),
-		//buscar en la tabla de bid los bids asociados a este item con iId y buscar los users q pusieron estos bids con uId.
-
-		ObjectNode respJson = Json.newObject();
-		ArrayNode array = respJson.arrayNode();
-		ObjectNode bidderAndAmount = Json.newObject();
-		bidderAndAmount.put("username", "Jose");bidderAndAmount.put("amount", 4.4);
-		array.add(bidderAndAmount);
-		bidderAndAmount = Json.newObject();
-		bidderAndAmount.put("username", "Apu");bidderAndAmount.put("amount", 5.4);
-		array.add(bidderAndAmount);
-		bidderAndAmount = Json.newObject();
-		bidderAndAmount.put("username", "Juaniquito");bidderAndAmount.put("amount", 3.4);
-		array.add(bidderAndAmount);
-		bidderAndAmount = Json.newObject();
-		bidderAndAmount.put("username", "AAAhhh!");bidderAndAmount.put("amount", 9.9);
-		array.add(bidderAndAmount);
+		try{
+			Class.forName(DBManager.driver);
+			Connection connection = DriverManager.getConnection(DBManager.db,DBManager.user,DBManager.pass);
+			Statement statement = connection.createStatement();
+			ResultSet rset = statement.executeQuery("select username, bid_amount " +
+													"from bid natural join users " +
+													"where iid = " + productId + " " +
+													"order by bid_amount;");
+			ObjectNode bidderAndAmount = null;
+			ObjectNode respJson = Json.newObject();
+			ArrayNode array = respJson.arrayNode();
+			while(rset.next()){
+				bidderAndAmount = Json.newObject();
+				bidderAndAmount.put("username", rset.getString("username"));
+				bidderAndAmount.put("amount", rset.getDouble("bid_amount"));
+				array.add(bidderAndAmount);
+			}
 		respJson.put("bidlist",array);
 		Logger.info("Product ID Bidlist:" + productId);
 		return ok(respJson);
+		}
+		catch (Exception e) {
+			Logger.info("EXCEPTION ON BID LIST");
+			e.printStackTrace();
+			return notFound();
+		}
 	}
 
 }

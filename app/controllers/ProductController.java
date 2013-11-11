@@ -355,6 +355,7 @@ public class ProductController extends Controller {
 					}
 					respJson.put("productsToBuy", respArray);
 					respJson.put("total", "$"+ new DecimalFormat("##.##").format(pricesTotal) + " (Shipping: $" + new DecimalFormat("##.##").format(shippingsTotal) +")");
+					Logger.info(respJson.toString());
 					return ok(respJson);
 				}
 				catch (Exception e) {
