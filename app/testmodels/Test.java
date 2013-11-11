@@ -66,7 +66,7 @@ public class Test {
 		cartItems.add((ProductForSale)items.get(5));
 		return cartItems;
 	}
-	
+	//DONE
 	public static ArrayList<Product> getSellingItemsList(){
 		ArrayList<Product> items = getProductList();
 		ArrayList<Product> mySellingItems = new ArrayList<Product>();
@@ -98,7 +98,7 @@ public class Test {
 		User user = new User(16,"Kevin", "Castillo", "kebinbin", "1234", "kebinbin@hotmail.com", shippingAddresses, creditCards);
 		return user;
 	}
-	
+	//DONE
 	public static ArrayList<MyBiddingsProduct> getMyBiddingsItemList(){
 		String scaledImgDir = "http://10.0.2.2:9000/images/scaled/";
 		boolean item2winningBid = false;
