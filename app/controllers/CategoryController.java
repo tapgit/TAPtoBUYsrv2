@@ -26,8 +26,11 @@ public class CategoryController extends Controller {
 			Statement statement = connection.createStatement();
 			ObjectNode respJson = Json.newObject();
 			ArrayNode array = respJson.arrayNode();
-			ObjectNode catJson = null;
-			
+			ObjectNode catJson = Json.newObject();
+//			catJson.put("catId", parentCatId);
+//			catJson.put("name", "All");
+//			catJson.put("hasSubCategories", false );
+//			array.add(catJson);
 			ResultSet rset = statement.executeQuery("select cat_id, catname, count(CB.childcat_id) " + 
 													"from category, has_subcat as CA natural left outer join has_subcat as CB(cid,childcat_id) " +
 													"where cat_id = CA.childcat_id and CA.parentcat_id = " + parentCatId +
