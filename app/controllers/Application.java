@@ -1,10 +1,17 @@
 package controllers;
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import models.Address;
 import models.Bid;
+import models.MyHistoryProduct;
+import models.MyHistoryProductForAuction;
+import models.MyHistoryProductForSale;
 import models.Product;
 import models.ProductForAuction;
 import models.ProductForAuctionInfo;
@@ -26,7 +33,8 @@ import views.html.*;
 
 public class Application extends Controller {
 
-	
+	public static String andrScaledImgDir = "http://10.0.2.2:9000/images/scaled/";
+
 	public static Result testdb(){
 		DBManager.getAll();
 		return ok();
@@ -34,36 +42,82 @@ public class Application extends Controller {
 	public static Result index() {
 		return ok(index.render("Your new application is ready."));
 	}
-	
-	public static Result getUserActivityHistory(int userId){////////Busca dentro de las ordenes donde este userId es seller y donde es buyer
-		if(userId!=16){
-			return notFound("User not found");//404
-		}
-		else{
+
+	public static Result getUserActivityHistory(int userId){
+
+		try{
+			Class.forName(DBManager.driver);
+			Connection connection = DriverManager.getConnection(DBManager.db,DBManager.user,DBManager.pass);
+			Statement statement = connection.createStatement();
 			ObjectNode respJson = Json.newObject();
-			ArrayNode array = respJson.arrayNode();//array de {forBid?,sold?,productObject}
+			ArrayNode array = respJson.arrayNode();
 			ObjectNode itemJson = null;
-			ArrayList<Product> myHistoryItems = Test.getHistoryItemsList();
-			for(Product p:myHistoryItems){
+			MyHistoryProduct item = null;
+
+			//Buscar los de subasta que he vendido
+			ResultSet rset = statement.executeQuery("select iid,auc_order_id,ititle,item_finalprice,shipping_price " + 
+					"from auction_order join item using(iid) natural join item_for_auction " +
+					"where seller_uid = " + userId + ";");
+
+			while(rset.next()){
 				itemJson = Json.newObject();
-				if(p instanceof ProductForSale){
-					itemJson.put("forBid", false);
-				}
-				else{
-					itemJson.put("forBid", true);
-				}
-				if(p.getId() == 0 || p.getId() == 2){//sold items
-					itemJson.put("sold", true);
-				}
-				else{
-					itemJson.put("sold", false);
-				}
-				itemJson.putPOJO("item", Json.toJson(p));
+				item = new MyHistoryProductForAuction(rset.getInt("iid"), rset.getInt("auc_order_id"), rset.getString("ititle"), 
+						rset.getDouble("item_finalprice"), rset.getDouble("shipping_price"), andrScaledImgDir + "img" + rset.getInt("iid") +".jpg", -1);
+				itemJson.put("forBid", true);
+				itemJson.put("sold", true);
+				itemJson.putPOJO("item", Json.toJson(item));
+				array.add(itemJson);
+			}
+
+			//Buscar los de subasta que he comprado
+			rset = statement.executeQuery("select iid,auc_order_id,ititle,item_finalprice,shipping_price " + 
+					"from auction_order join item using(iid) natural join item_for_auction " +
+					"where buyer_uid = " + userId + ";");
+			while(rset.next()){
+				itemJson = Json.newObject();
+				item = new MyHistoryProductForAuction(rset.getInt("iid"), rset.getInt("auc_order_id"), rset.getString("ititle"), 
+						rset.getDouble("item_finalprice"), rset.getDouble("shipping_price"), andrScaledImgDir + "img" + rset.getInt("iid") +".jpg", -1);
+				itemJson.put("forBid", true);
+				itemJson.put("sold", false);
+				itemJson.putPOJO("item", Json.toJson(item));
+				array.add(itemJson);
+			}
+
+			//Buscar los de buynow que he vendido
+			rset = statement.executeQuery("select iid,buynow_order_id,ititle,items_price,shipping_price " + 
+					"from seller_buynow_order natural join buynow_order natural join buynow_order_items join item using(iid) natural join item_for_sale " +
+					"where seller_id = " + userId +";");
+			while(rset.next()){
+				itemJson = Json.newObject();
+				item = new MyHistoryProductForSale(rset.getInt("iid"), rset.getInt("buynow_order_id"), rset.getString("ititle"), 
+						rset.getDouble("items_price"), rset.getDouble("shipping_price"), andrScaledImgDir + "img" + rset.getInt("iid") +".jpg", -1);
+				itemJson.put("forBid", false);
+				itemJson.put("sold", true);
+				itemJson.putPOJO("item", Json.toJson(item));
+				array.add(itemJson);
+			}
+
+			//Buscar los de buynow que he comprado
+			rset = statement.executeQuery("select iid,buynow_order_id,ititle,items_price,shipping_price " + 
+					"from seller_buynow_order natural join buynow_order natural join buynow_order_items join item using(iid) natural join item_for_sale " +
+					"where buyer_uid = " + userId +";");
+			while(rset.next()){
+				itemJson = Json.newObject();
+				item = new MyHistoryProductForSale(rset.getInt("iid"), rset.getInt("buynow_order_id"), rset.getString("ititle"), 
+						rset.getDouble("items_price"), rset.getDouble("shipping_price"), andrScaledImgDir + "img" + rset.getInt("iid") +".jpg", -1);
+				itemJson.put("forBid", false);
+				itemJson.put("sold", false);
+				itemJson.putPOJO("item", Json.toJson(item));
 				array.add(itemJson);
 			}
 			respJson.put("myHistory", array);
 			return ok(respJson);//200
 		}
+		catch (Exception e) {
+			Logger.info("EXCEPTION ON MY HISTORY");
+			e.printStackTrace();
+			return notFound();
+		}
 	}
-
+	
 }

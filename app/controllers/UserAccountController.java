@@ -23,6 +23,7 @@ import testmodels.Test;
 
 public class UserAccountController extends Controller {
 
+	//DONE
 	public static Result checkLogin(){
 		JsonNode json = request().body().asJson();
 		if(json == null) {
@@ -109,10 +110,8 @@ public class UserAccountController extends Controller {
 		}
 
 	}
-
+	//DONE
 	public static Result getUserAccountInfo(int userId){
-
-		
 		try{
 			Class.forName(DBManager.driver);
 			Connection connection = DriverManager.getConnection(DBManager.db,DBManager.user,DBManager.pass);

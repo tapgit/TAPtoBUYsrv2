@@ -17,9 +17,8 @@ import play.mvc.Result;
 
 public class CategoryController extends Controller {
 
-	
+	//DONE
 	public static Result getSubcategories(int parentCatId){
-
 		try {
 			Class.forName(DBManager.driver);
 			Connection connection = DriverManager.getConnection(DBManager.db,DBManager.user,DBManager.pass);

@@ -2,26 +2,32 @@ package models;
 
 public class MyHistoryProduct {
 	private int id;
+	private int order_id;
 	private String title;
 	private double paidPrice;
 	private double paidShippingPrice;
 	private String imgLink;
-	private int quantityOrBidAmount;
-	public MyHistoryProduct(int id, String title, double paidPrice,
-			double paidShippingPrice, String imgLink, int quantityOrBidAmount) {
+	public MyHistoryProduct(int id, int order_id, String title,
+			double paidPrice, double paidShippingPrice, String imgLink) {
 		super();
 		this.id = id;
+		this.order_id = order_id;
 		this.title = title;
 		this.paidPrice = paidPrice;
 		this.paidShippingPrice = paidShippingPrice;
 		this.imgLink = imgLink;
-		this.quantityOrBidAmount = quantityOrBidAmount;
 	}
 	public int getId() {
 		return id;
 	}
 	public void setId(int id) {
 		this.id = id;
+	}
+	public int getOrder_id() {
+		return order_id;
+	}
+	public void setOrder_id(int order_id) {
+		this.order_id = order_id;
 	}
 	public String getTitle() {
 		return title;
@@ -47,10 +53,5 @@ public class MyHistoryProduct {
 	public void setImgLink(String imgLink) {
 		this.imgLink = imgLink;
 	}
-	public int getQuantityOrBidAmount() {
-		return quantityOrBidAmount;
-	}
-	public void setQuantityOrBidAmount(int quantityOrBidAmount) {
-		this.quantityOrBidAmount = quantityOrBidAmount;
-	}
+
 }

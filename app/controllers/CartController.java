@@ -24,9 +24,8 @@ import testmodels.Test;
 public class CartController extends Controller {
 
 	public static String andrScaledImgDir = "http://10.0.2.2:9000/images/scaled/";
-	
+	//DONE
 	public static Result getCartItems(int userId){	
-		
 		try{
 			Class.forName(DBManager.driver);
 			Connection connection = DriverManager.getConnection(DBManager.db,DBManager.user,DBManager.pass);

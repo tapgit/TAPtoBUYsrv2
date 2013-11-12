@@ -256,27 +256,8 @@ public class ProductController extends Controller {
 			return noContent();//204 (product removed from sale successfully)
 		//}
 	}
-
-
-	//	public static Result buyNow(int productId){
-	//		if(!(productId >=0 && productId < 6)){
-	//			return notFound("Product not found");//404
-	//		}
-	//		else{
-	//			Product buyNowProduct = Test.getProductList().get(productId);
-	//			if(buyNowProduct instanceof ProductForSale){
-	//				User theUser = Test.getUser();
-	//				Address defualtShippingAddress = theUser.getShipping_addresses()[0];
-	//				ObjectNode json =  Json.newObject();
-	//				json.putPOJO("shipping_address", Json.toJson(defualtShippingAddress));
-	//				json.putPOJO("buyNowProduct", Json.toJson(buyNowProduct));
-	//				return ok(json);//200
-	//			}
-	//			else{
-	//				return badRequest("Cannot buy instantly items in auction");//400
-	//			}
-	//		}
-	//	}
+	
+	//DONE
 	public static Result buyNow(int userId){
 		JsonNode json = request().body().asJson();
 		if(json == null) {

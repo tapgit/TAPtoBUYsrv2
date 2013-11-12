@@ -26,6 +26,7 @@ import testmodels.Test;
 
 public class BidController extends Controller {
 	public static String andrScaledImgDir = "http://10.0.2.2:9000/images/scaled/";
+	
 	public static Result placeBid(){
 //		ArrayList<Product> allItems = Test.getProductList();
 //		JsonNode json = request().body().asJson();
@@ -58,7 +59,7 @@ public class BidController extends Controller {
 //		}
 		return ok();
 	}
-
+	//DONE
 	public static Result getMyBiddings(int userId){
 		try{
 			Class.forName(DBManager.driver);
@@ -104,31 +105,6 @@ public class BidController extends Controller {
 			e.printStackTrace();
 			return notFound();
 		}
-		
-		
-		
-		
-		
-		
-//		String scaledImgDir = "http://10.0.2.2:9000/images/scaled/";
-//		boolean item2winningBid = false;
-//		boolean item5winningBid = true;
-//		MyBiddingsProduct item2 = new MyBiddingsProduct(1,"Database System Concepts 6.ed", "10h 20m",0, scaledImgDir+ "img4.jpg", "loloLopez13", 3.0, 0.99, 24.99,11, item2winningBid);
-//		MyBiddingsProduct item5 = new MyBiddingsProduct(4,"Samsumg Galaxy 4s unlocked", "2d 5h", 0, scaledImgDir+ "img3.jpg", "bondLolo", 4.8, 9.99, 299.99, 29,item5winningBid);
-//		ArrayList<MyBiddingsProduct> itemsIHavePlacedBids = new ArrayList<MyBiddingsProduct>();
-//		itemsIHavePlacedBids.add(item2);
-//		itemsIHavePlacedBids.add(item5);
-//		ObjectNode respJson = Json.newObject();
-//		ArrayNode array = respJson.arrayNode();
-//		ObjectNode itemJson = null;
-//		for(MyBiddingsProduct p : itemsIHavePlacedBids){
-//			itemJson = Json.newObject();
-//			itemJson.putPOJO("item", Json.toJson(p));
-//			array.add(itemJson);
-//		}
-//		respJson.put("myBiddingsItems", array);
-//		return ok(respJson);//200
-
 	}
 	
 	//DONE

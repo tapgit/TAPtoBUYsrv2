@@ -26,9 +26,11 @@ public class SearchController extends Controller {
 	//public static String imagesDir = "C:\\Users\\Kidany\\Documents\\GitHub\\git\\TAPtoBUYsrv\\images\\";
 	public static String andrScaledImgDir = "http://10.0.2.2:9000/images/scaled/";
 
+	//DONE
 	public static Result getSearchResultsAll(int catId, int orderById){
 		return getSearchResults(catId, orderById, "");
 	}
+	//DONE
 	public static Result getSearchResults(int catId, int orderById, String searchString){
 		searchString = searchString.replaceAll("%20"," ");//replace white spaces by %20
 		//Specify in which way items will be ordered
