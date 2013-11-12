@@ -53,7 +53,7 @@ GET		/mybiddings/:userId									controllers.BidController.getMyBiddings(userId:
 GET		/myhistory/:userId									controllers.Application.getUserActivityHistory(userId: Integer)						
 
 GET		/bidlist/:productId									controllers.BidController.getBidList(productId: Integer)
-
+GET 	/ratinglist/:productId								controllers.UserAccountController.getRatingList(productId: Integer)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file             	   						controllers.Assets.at(path="/public", file)

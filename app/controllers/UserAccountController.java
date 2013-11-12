@@ -7,6 +7,7 @@ import java.sql.Statement;
 
 import models.Address;
 import models.CreditCard;
+import models.Rating;
 import models.User;
 
 import org.codehaus.jackson.JsonNode;
@@ -122,7 +123,7 @@ public class UserAccountController extends Controller {
 					"from users natural join shipping_address natural join credit_card " +
 					"where uid = " + userId + " " + 
 					"group by username, pass, fname, lname, email;");
-			
+
 			if(rset.next()){
 				String username = rset.getString("username");
 				String pass = rset.getString("pass");
@@ -131,28 +132,28 @@ public class UserAccountController extends Controller {
 				String email = rset.getString("email");
 				Address[] shippingAddresses = new Address[rset.getInt("shipCount")];
 				CreditCard[] creditCards = new CreditCard[rset.getInt("crCardCount")];
-			
+
 				//Get shipping addresses:
 				rset = statement.executeQuery("select shipaddr_id,country, contact_name, street, city, state, zip_code, telephone " +
-											  "from shipping_address " +
-											  "where uid = " + userId + ";"); 
+						"from shipping_address " +
+						"where uid = " + userId + ";"); 
 				int i=0;
 				while(rset.next()){
 					shippingAddresses[i++] = new Address(rset.getInt(1), rset.getString(2), rset.getString(3), 
 							rset.getString(4), rset.getString(5), rset.getString(6), rset.getString(7), rset.getString(8));
 				}
 				//Get CreditCard-BillingAddress pair
-				
+
 				rset = statement.executeQuery("select billaddr_id,country,contact_name,street,city,state,zip_code,telephone, " +
-											  "sec_number,holders_name,exp_date " +
-											  "from billing_address natural join credit_card " +
-											  "where uid = " + userId + ";");
+						"sec_number,holders_name,exp_date " +
+						"from billing_address natural join credit_card " +
+						"where uid = " + userId + ";");
 				Address tempBillingAddress = null;
 				i=0;
 				while(rset.next()){
 					tempBillingAddress =  new Address(rset.getInt(1), rset.getString(2), rset.getString(3), 
 							rset.getString(4), rset.getString(5), rset.getString(6), rset.getString(7), rset.getString(8));
-					
+
 					creditCards[i++] = new CreditCard(rset.getString(9), rset.getString(9), rset.getString(9), tempBillingAddress);
 				}
 				User user = new User(userId,fname, lname, username, pass, email, shippingAddresses, creditCards);
@@ -170,7 +171,42 @@ public class UserAccountController extends Controller {
 		}
 	}
 
-	
+	//DONE pero de debe chequiar
+	public static Result getRatingList(int productId){
+		try{
+			Class.forName(DBManager.driver);
+			Connection connection = DriverManager.getConnection(DBManager.db,DBManager.user,DBManager.pass);
+			Statement statement = connection.createStatement();
+			ResultSet rset = statement.executeQuery("select username, stars " +
+					"from item_for_sale natural join ranks as rnk(b_uid,uid,stars),users " +
+					"where iid = " + productId + " and users.uid = b_uid");
+			ObjectNode buyersAndStars = null;
+			ObjectNode respJson = Json.newObject();
+			ArrayNode array = respJson.arrayNode();
+			Rating rating = null;
+			while(rset.next()){
+				buyersAndStars = Json.newObject();
+				rating = new Rating(rset.getString("username"), rset.getInt("stars"));
+				array.add(Json.toJson(rating));
+			}
+			rset = statement.executeQuery("select username, stars " +
+					"from item_for_auction natural join ranks as rnk(b_uid,uid,stars),users " +
+					"where iid = " + productId + " and users.uid = b_uid");
+			while(rset.next()){
+				buyersAndStars = Json.newObject();
+				rating = new Rating(rset.getString("username"), rset.getInt("stars"));
+				array.add(Json.toJson(rating));
+			}
+			respJson.put("ratingslist",array);
+			return ok(respJson);
+		}
+		catch (Exception e) {
+			Logger.info("EXCEPTION ON RATING LIST");
+			e.printStackTrace();
+			return notFound();
+		}
+	}
+
 	public static Result updateUserAccount(int userId){
 		JsonNode json = request().body().asJson();
 		if(json == null) {
