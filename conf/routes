@@ -39,7 +39,7 @@ POST	/sellings/:userId									controllers.ProductController.sellAProduct(userId
 PUT		/sellings/:userId/:productId						controllers.ProductController.updateASellingProduct(userId: Integer, productId: Integer)
 DELETE  /sellings/:userId/:productId 						controllers.ProductController.quitFromSelling(userId: Integer, productId: Integer)
 
-#GET		/orders/:orderId									controllers.Application.getOrderInfo(OrderId: String)
+GET		/orders/:orderId									controllers.Application.getOrderInfo(orderId: Integer)
 
 #GET		/buynow/:productId									controllers.ProductController.buyNow(productId: Integer)
 

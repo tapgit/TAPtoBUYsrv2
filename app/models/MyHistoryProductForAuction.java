@@ -6,8 +6,9 @@ public class MyHistoryProductForAuction extends MyHistoryProduct {
 
 	public MyHistoryProductForAuction(int id, int order_id, String title,
 			double paidPrice, double paidShippingPrice, String imgLink,
-			int bidsAmount) {
-		super(id, order_id, title, paidPrice, paidShippingPrice, imgLink);
+			String sellerUsername, double sellerRate, int bidsAmount) {
+		super(id, order_id, title, paidPrice, paidShippingPrice, imgLink,
+				sellerUsername, sellerRate);
 		this.bidsAmount = bidsAmount;
 	}
 
@@ -18,5 +19,7 @@ public class MyHistoryProductForAuction extends MyHistoryProduct {
 	public void setBidsAmount(int bidsAmount) {
 		this.bidsAmount = bidsAmount;
 	}
+
+	
 	
 }
